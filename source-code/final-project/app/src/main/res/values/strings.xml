@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Form Validation</string>
+
+    <string name="error_not_enough_age">You must be 18 years old to create an account</string>
+    <string name="error_invalid_date">Invalid Date</string>
+    <string name="error_email_empty">Email cannot be empty</string>
+    <string name="error_email_invalid">Email Invalid</string>
+    <string name="error_name_length">Name must be at least 3 characters</string>
+    <string name="error_password">Password must be at least 6 characters</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="date_of_birth">Date of Birth</string>
+    <string name="create_account">Create Account</string>
+</resources>

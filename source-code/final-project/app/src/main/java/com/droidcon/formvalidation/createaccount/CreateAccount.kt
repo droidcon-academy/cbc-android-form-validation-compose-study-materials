@@ -18,6 +18,7 @@ import com.droidcon.formvalidation.ui.theme.AppButton
 import com.droidcon.formvalidation.ui.theme.AppTextField
 import com.droidcon.formvalidation.ui.theme.AppTheme
 import com.droidcon.formvalidation.R
+import com.droidcon.formvalidation.createaccount.validation.ValidatorFactory
 import java.util.*
 
 @Composable
@@ -25,16 +26,16 @@ fun CreateAccountForm(paddingValues: PaddingValues, viewModel: CreateAccountView
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
 
-    val state = viewModel.state.collectAsState()
-
     val year = calendar[Calendar.YEAR]
     val month = calendar[Calendar.MONTH]
     val dayOfMonth = calendar[Calendar.DAY_OF_MONTH]
 
+    val state = viewModel.state.collectAsState()
+
     val datePicker = DatePickerDialog(
         context,
         { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int ->
-
+            viewModel.onEvent(CreateAccountEvent.DateOfBirthChanged("$selectedDayOfMonth/${selectedMonth + 1}/$selectedYear"))
         },
         year, month, dayOfMonth
     )
@@ -50,9 +51,7 @@ fun CreateAccountForm(paddingValues: PaddingValues, viewModel: CreateAccountView
             hint = stringResource(R.string.name),
             leadingIcon = Icons.Filled.Person,
             error = state.value.nameError,
-            onValueChanged = {
-                viewModel.onEvent(CreateAccountEvent.NameChanged(it))
-            }
+            onValueChanged = { viewModel.onEvent(CreateAccountEvent.NameChanged(it)) }
         )
 
         AppTextField(
@@ -60,28 +59,28 @@ fun CreateAccountForm(paddingValues: PaddingValues, viewModel: CreateAccountView
             hint = stringResource(R.string.email),
             leadingIcon = Icons.Filled.Email,
             error = state.value.emailError,
-            onValueChanged = {
-                viewModel.onEvent(CreateAccountEvent.EmailChanged(it))
-            }
+            onValueChanged = { viewModel.onEvent(CreateAccountEvent.EmailChanged(it)) }
         )
 
         AppTextField(
-            value = "",
+            value = state.value.password,
             hint = stringResource(R.string.password),
             leadingIcon = Icons.Filled.Lock,
             isPasswordField = true,
-            error = null,
-            onValueChanged = { }
+            error = state.value.passwordError,
+            onValueChanged = { viewModel.onEvent(CreateAccountEvent.PasswordChanged(it)) }
         )
 
         AppTextField(
-            value = "",
+            value = state.value.dateOfBirth,
             hint = stringResource(R.string.date_of_birth),
             leadingIcon = Icons.Filled.CalendarMonth,
             isClickOnly = true,
-            onClick = { datePicker.show() },
-            error = null,
-            onValueChanged = { }
+            onClick = {
+                datePicker.show()
+            },
+            error = state.value.dateOfBirthError,
+            onValueChanged = { viewModel.onEvent(CreateAccountEvent.DateOfBirthChanged(it)) }
         )
 
         Spacer(modifier = Modifier.size(16.dp))
@@ -101,7 +100,7 @@ fun CreateAccountFormPreview() {
     AppTheme {
         CreateAccountForm(
             paddingValues = PaddingValues(4.dp),
-            viewModel = CreateAccountViewModel()
+            viewModel = CreateAccountViewModel(ValidatorFactory.create())
         )
     }
 }
